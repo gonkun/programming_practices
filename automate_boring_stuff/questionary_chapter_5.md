@@ -1,29 +1,23 @@
 1.
-    {}
+    `{}`
 
 2.
-    {'foo': 42}
+    `{'foo': 42}`
 
 3.
-    dictionary: 
-        * items not sorted
-        * has a key and a value
-        
-    list:
-        * items sorted
-        * only has values sorted with indexes
+    The items stored in a dictionary are unordered, while the items in a list are ordered.
 
 4.
-    You get a KeyError error
+    It returns a `KeyError` error
 
 5.
-    No difference. The in operator checks whether a value exists as a key in the dictionary
+    There is no difference. The operator `in` checks wheter a value exists as a key in the dictionary. 
 
 6.
-    first check if 'cat' key is in a dictionary. Second checks whether there is a value 'cat' for one of thekeys in spam.
+    The first checks whether there is a `cat` key in the dictionary, while the second checks whether there is a value `cat` for on of keys in `spam`
 
 7.
-    spam.setdefault('color', 'black')
+    `spam.setdefault('color', 'black')`
 
 8.
-    pprint.pprint()
+    `pprint.pprint()`
