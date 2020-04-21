@@ -12,7 +12,11 @@ def printTable(table):
     colWidth = []
     for list in table:
         colWidth.append(len(max(list, key=len)))
-    print(colWidth)
+
+    for word in range(len(table[0])):
+        for item in range(len(table)):
+            print(table[item][word].rjust(colWidth[item]), end=" ")
+        print()
 
 
 printTable(tableData)
