@@ -27,12 +27,12 @@ def main_menu():
         print("\n0. Exit")
 
         opt_action = getOption()
-
-        if opt_action != 1 or opt_action != 2:
+        if opt_action != 1 and opt_action != 2:
             if opt_action == 0:
-                stop = True
+                exit(0)
             else:
                 print("Chose a correct option")
+        stop = True
 
     stop = False
     opt_vpn = 0
@@ -49,13 +49,14 @@ def main_menu():
 
         opt_vpn = getOption()
 
-        if opt_vpn < 1 or opt_vpn > i:
+        if opt_vpn < 1 and opt_vpn > i:
             if opt_vpn == 0:
-                stop = True
+                exit(0)
             else:
                 print("Chose a correct option")
         else:
             manageVPN(opt_action, dict_vpn[opt_vpn])
+            stop = True
 
 
 def manageVPN(action, vpn):
@@ -75,7 +76,12 @@ def manageVPN(action, vpn):
         if vpn in vpn_running:
             print("VPN '{}' already up!".format(vpn))
         else:
-            pass  # TODO
+            print("Go to start VPN '{}'".format(vpn))
+    elif action == 2:
+        if vpn not in vpn_running:
+            print("VPN '{}' already down!".format(vpn))
+        else:
+            print("Go to stop VPN '{}'".format(vpn))
 
 
 def getOption():
