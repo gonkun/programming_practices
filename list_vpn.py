@@ -4,6 +4,7 @@ from tabulate import tabulate
 import netifaces
 import re
 import os
+import subprocess
 
 vpns = {
     "tun-uz-dev-euw1": ["uz", "dev", "eu-west-1"],
@@ -32,7 +33,8 @@ def main_menu():
                 exit(0)
             else:
                 print("Chose a correct option")
-        stop = True
+        else:
+            stop = True
 
     stop = False
     opt_vpn = 0
@@ -49,7 +51,7 @@ def main_menu():
 
         opt_vpn = getOption()
 
-        if opt_vpn < 1 and opt_vpn > i:
+        if opt_vpn < 1 or opt_vpn > i:
             if opt_vpn == 0:
                 exit(0)
             else:
@@ -77,6 +79,17 @@ def manageVPN(action, vpn):
             print("VPN '{}' already up!".format(vpn))
         else:
             print("Go to start VPN '{}'".format(vpn))
+            # subprocess.Popen(["openvpn", "--config", config_file, "--daemon", "vpn-wolol",
+            #                   "--log-append", "/var/log/{}-{}-{}.log".format(
+            #                       vpns[vpn][0], vpns[vpn][1], vpns[vpn][2])],
+            #                  cwd="{}/{}".format(keys_path, vpns[vpn][0]))
+            start_vpn = subprocess.Popen(["openvpn", "--config", config_file, "--daemon", "vpn-wolol",
+                                          "--log-append", "/var/log/{}-{}-{}.log".format(
+                                              vpns[vpn][0], vpns[vpn][1], vpns[vpn][2])],
+                                         cwd="{}/{}".format(keys_path, vpns[vpn][0]))
+            start_vpn.wait()
+            print("\nVPN started!\n")
+
     elif action == 2:
         if vpn not in vpn_running:
             print("VPN '{}' already down!".format(vpn))
