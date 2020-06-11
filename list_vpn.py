@@ -5,6 +5,8 @@ import netifaces
 import re
 import os
 import subprocess
+import time
+import psutil
 
 vpns = {
     "tun-uz-dev-euw1": ["uz", "dev", "eu-west-1"],
@@ -63,9 +65,10 @@ def main_menu():
 
 def manageVPN(action, vpn):
     keys_path = "/home/gon/Documents/sys/vpn/userzoom"
-    config_file = "{}-{}-{}.ovpn".format(vpns[vpn][0],
-                                         vpns[vpn][1],
-                                         vpns[vpn][2])
+    daemon_name = "{}-{}-{}".format(vpns[vpn][0],
+                                    vpns[vpn][1],
+                                    vpns[vpn][2])
+    config_file = "{}.ovpn".format(daemon_name)
     config_path = "{}/{}/{}".format(keys_path, vpns[vpn][0], config_file)
 
     if not os.path.isfile(config_path):
@@ -79,15 +82,20 @@ def manageVPN(action, vpn):
             print("VPN '{}' already up!".format(vpn))
         else:
             print("Go to start VPN '{}'".format(vpn))
-            # subprocess.Popen(["openvpn", "--config", config_file, "--daemon", "vpn-wolol",
-            #                   "--log-append", "/var/log/{}-{}-{}.log".format(
-            #                       vpns[vpn][0], vpns[vpn][1], vpns[vpn][2])],
-            #                  cwd="{}/{}".format(keys_path, vpns[vpn][0]))
-            start_vpn = subprocess.Popen(["openvpn", "--config", config_file, "--daemon", "vpn-wolol",
-                                          "--log-append", "/var/log/{}-{}-{}.log".format(
-                                              vpns[vpn][0], vpns[vpn][1], vpns[vpn][2])],
-                                         cwd="{}/{}".format(keys_path, vpns[vpn][0]))
-            start_vpn.wait()
+            subprocess.run(["openvpn", "--config", config_file, "--daemon",
+                            "tun-{}".format(daemon_name),
+                            "--log-append", "/var/log/{}.log".format(daemon_name)],
+                           cwd="{}/{}".format(keys_path, vpns[vpn][0]))
+            # start_vpn = subprocess.Popen(["openvpn", "--config", config_file, "--daemon", "vpn-wolol",
+            #                               "--log-append", "/var/log/{}-{}-{}.log".format(
+            #                                   vpns[vpn][0], vpns[vpn][1], vpns[vpn][2])],
+            #                              cwd="{}/{}".format(keys_path, vpns[vpn][0]))
+            # start_vpn.wait()
+            time.sleep(7)
+            if getPidVPN("tun-".format(daemon_name)) == 0:
+                print("Error starting VPN!")
+                exit(2)
+
             print("\nVPN started!\n")
 
     elif action == 2:
@@ -95,6 +103,33 @@ def manageVPN(action, vpn):
             print("VPN '{}' already down!".format(vpn))
         else:
             print("Go to stop VPN '{}'".format(vpn))
+
+
+def getPidVPN(vpn_name):
+    '''
+    Get a list of all the PIDs of a all the running process whose name contains
+    the given string processName
+    '''
+
+    list_process = []
+    pid = 0
+
+    # Iterate over the all the running process
+    for proc in psutil.process_iter():
+        try:
+            pinfo = proc.as_dict(attrs=['pid', 'name'])
+            # Check if process name contains the given name string
+            if "openvpn".lower() in pinfo['name'].lower():
+                list_process.append(pinfo['pid'])
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            pass
+
+    for pid in list_process:
+        p = psutil.Process(pid)
+        if vpn_name == p.cmdline()[4]:
+            break
+
+    return pid
 
 
 def getOption():
