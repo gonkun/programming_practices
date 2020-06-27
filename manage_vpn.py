@@ -7,6 +7,7 @@ import os
 import subprocess
 import time
 import psutil
+import sys
 
 vpns = {
     "tun-uz-dev-euw1": ["uz", "dev", "eu-west-1"],
@@ -78,8 +79,7 @@ def manageVPN(action, vpn):
         config_path = "{}/{}/{}".format(keys_path, vpns[vpn][0], config_file)
         subfolder = "{}".format(vpns[vpn][0])
     else:
-        daemon_name = "{}-{}-{}".format(vpns[vpn]
-                                        [0], vpns[vpn][1], vpns[vpn][2])
+        daemon_name = "{}-{}-{}".format(vpns[vpn][0], vpns[vpn][1], vpns[vpn][2])
         config_file = "{}.ovpn".format(daemon_name)
         config_path = "{}/{}/{}".format(keys_path, vpns[vpn][0], config_file)
         subfolder = "{}".format(vpns[vpn][0])
@@ -181,11 +181,17 @@ def getVPNAddresses():
         return vpn_networks
 
 
+def checkSudo():
+    # This script must be run as root!
+    if not os.geteuid() == 0:
+        sys.exit("ERROR: This script must be run as root!")
+
+
 def main():
+    checkSudo()
     dict_vpn = getVPNAddresses()
     print()
     print(tabulate(dict_vpn.items(), headers=["Interface", "IP Address"]))
-    print()
     print()
     main_menu()
 

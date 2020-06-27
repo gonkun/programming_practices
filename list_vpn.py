@@ -3,10 +3,6 @@
 from tabulate import tabulate
 import netifaces
 import re
-import os
-import subprocess
-import time
-import psutil
 
 vpns = {
     "tun-uz-dev-euw1": ["uz", "dev", "eu-west-1"],
