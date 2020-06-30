@@ -72,14 +72,19 @@ def main_menu():
 
 
 def manageVPN(action, vpn):
+    resolv_uz = "/etc/resolv.conf.uz"
+    resolv_orig = "/etc/resolv.conf.orig"
+    resolv_file = "/etc/resolv.conf"
     keys_path = "/home/gon/Documents/sys/vpn/userzoom"
+
     if vpn == "tun-office-bcn":
         daemon_name = "{}-{}".format(vpns[vpn][0], vpns[vpn][1])
         config_file = "{}.ovpn".format(daemon_name)
         config_path = "{}/{}/{}".format(keys_path, vpns[vpn][0], config_file)
         subfolder = "{}".format(vpns[vpn][0])
     else:
-        daemon_name = "{}-{}-{}".format(vpns[vpn][0], vpns[vpn][1], vpns[vpn][2])
+        daemon_name = "{}-{}-{}".format(vpns[vpn]
+                                        [0], vpns[vpn][1], vpns[vpn][2])
         config_file = "{}.ovpn".format(daemon_name)
         config_path = "{}/{}/{}".format(keys_path, vpns[vpn][0], config_file)
         subfolder = "{}".format(vpns[vpn][0])
@@ -112,6 +117,10 @@ def manageVPN(action, vpn):
                 print("Error starting VPN!")
                 exit(2)
 
+            if daemon_name == "office-bcn":
+                subprocess.run(["rm", resolv_file])
+                subprocess.run(["ln", "-s", resolv_uz, resolv_file])
+
             print("\nVPN started!\n")
 
     elif action == 2:
@@ -122,6 +131,11 @@ def manageVPN(action, vpn):
             vpn_pid = getPidVPN("tun-".format(daemon_name))
             p = psutil.Process(vpn_pid)
             p.terminate()
+
+            if daemon_name == "office-bcn":
+                subprocess.run(["rm", resolv_file])
+                subprocess.run(["ln", "-s", resolv_orig, resolv_file])
+
             print("VPN '{}' finished!".format(vpn))
 
 
