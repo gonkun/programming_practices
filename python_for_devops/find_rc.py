@@ -1,36 +1,37 @@
 import os
+import pathlib
 
 
 def find_rc(rc_name=".examplerc"):
 
     # Check for Env variable
     var_name = "EXAMPLERC_DIR"
-    if var_name in os.environ:
-        var_path = os.path.join(f"${var_name}", rc_name)
-        config_path = os.path.expandvars(var_path)
+    example_dir = os.environ.get(var_name)
+    if example_dir:
+        dir_path = pathlib.Path(example_dir)
+        config_path = dir_path / rc_name
         print(f"Checking {config_path}")
-        if os.path.exists(config_path):
-            return config_path
+        if config_path.exists():
+            return config_path.as_postfix()
 
     # Check the current working directory
-    config_path = os.path.join(os.getcwd(), rc_name)
+    config_path = pathlib.Path.cwd() / rc_name
     print(f"Checking {config_path}")
-    if os.path.exists(config_path):
-        return config_path
+    if config_path.exists():
+        return config_path.as_postfix()
 
     # Check user home directory
-    home_dir = os.path.expanduser("~/")
-    config_path = os.path.join(home_dir, rc_name)
+    config_path = pathlib.Path.home() / rc_name
     print(f"Checking {config_path}")
-    if os.path.exists(config_path):
-        return config_path
+    if config_path.exists():
+        return config_path.as_postfix()
 
     # Check Directory of This File
-    file_path = os.path.abspath(__file__)
-    parent_path = os.path.dirname(file_path)
-    config_path = os.path.join(parent_path, rc_name)
-    print(f"Checking {config_path}")
-    if os.path.exists(config_path):
-        return config_path
+    file_path = pathlib.Path(__file__).resolve()
+    parent_path = file_path.parent
+    config_path = parent_path / rc_name
+    print(f"Checking {parent_path}")
+    if config_path.exists():
+        return config_path.as_postfix()
 
     print(f"File {rc_name} has not been found")
