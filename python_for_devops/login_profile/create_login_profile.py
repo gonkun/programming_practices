@@ -41,6 +41,7 @@ def randomPassword(length=12):
 @click.option('--username', required=True, help='Set AWS IAM user for create its login profile')
 def createLogin(profile, username):
 
+    url = "https://081750248911.signin.aws.amazon.com/console"
     conn = createConn(profile)
     password = randomPassword()
 
@@ -62,6 +63,7 @@ def createLogin(profile, username):
 
     print(f'Login profile user: {username}')
     print(f'Temporary password: {password}')
+    print(f'URL: {url}')
 
 
 if __name__ == '__main__':
