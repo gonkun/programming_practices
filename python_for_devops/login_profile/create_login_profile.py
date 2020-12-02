@@ -56,8 +56,9 @@ def createLogin(profile, username):
             exit(1)
         else:
             print(
-                'Unexpected error occured while creating login profile... hence cleaning up', error)
-            return 'Login profile could not be create', error
+                'Unexpected error occured while creating login profile...')
+            print('Error message: ', error)
+            # return 'Login profile could not be create', error
 
     print(f'Login profile user: {username}')
     print(f'Temporary password: {password}')
