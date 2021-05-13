@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.22.0 (HEAD)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: worker
+  name: worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: worker
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.22.0 (HEAD)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: worker
+    spec:
+      containers:
+        - args:
+            - worker.py
+          env:
+            - name: APP_SETTINGS
+              value: config.ProductionConfig
+            - name: DATABASE_URL
+              value: postgresql://wordcount_dbadmin:@db/wordcount
+            - name: REDISTOGO_URL
+              value: redis://redis:6379
+          image: flask-by-example:v1
+          name: worker
+          resources: {}
+      restartPolicy: Always
+status: {}
