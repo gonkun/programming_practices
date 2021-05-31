@@ -29,8 +29,13 @@ spec:
           env:
             - name: APP_SETTINGS
               value: config.ProductionConfig
+            - name: DBPASS
+              valueFrom:
+                secretKeyRef:
+                  name: fbe-secret
+                  key: dbpass
             - name: DATABASE_URL
-              value: postgresql://wordcount_dbadmin:@db/wordcount
+              value: postgresql://wordcount_dbadmin:${DBPASS}@db/wordcount
             - name: REDISTOGO_URL
               value: redis://redis:6379
           image: flask-by-example:v1
