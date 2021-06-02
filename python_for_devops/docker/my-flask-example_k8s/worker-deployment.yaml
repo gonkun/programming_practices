@@ -38,8 +38,10 @@ spec:
               value: postgresql://wordcount_dbadmin:${DBPASS}@db/wordcount
             - name: REDISTOGO_URL
               value: redis://redis:6379
-          image: flask-by-example:v1
+          image: diskun/flask-by-example:v1
           name: worker
           resources: {}
       restartPolicy: Always
+      imagePullSecrets:
+        - name: myregistrykey
 status: {}
