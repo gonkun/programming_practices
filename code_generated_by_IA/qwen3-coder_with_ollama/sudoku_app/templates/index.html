@@ -1,40 +1,106 @@
-<!-- templates/index.html -->
 
+<!-- templates/index.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Generador de Sudoku</title>
+    <title>Sudoku Master</title>
     <style>
-        table {
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        h1 {
+            color: #4a4a8a;
+            margin-bottom: 20px;
+        }
+        .sudoku-board {
+            border: 3px solid #333;
             border-collapse: collapse;
-            margin: 20px auto;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
-        td {
-            width: 40px;
-            height: 40px;
+        .sudoku-board td {
+            width: 45px;
+            height: 45px;
             text-align: center;
-            border: 1px solid #000;
-        }
-        .bold {
+            font-size: 22px;
+            border: 1px solid #ccc;
             font-weight: bold;
+            color: #4a4a8a;
         }
-        .center {
-            text-align: center;
+        /* Add thicker borders for 3x3 subgrids */
+        .sudoku-board tr:nth-child(3n) td {
+            border-bottom: 3px solid #333;
+        }
+        .sudoku-board td:nth-child(3n) {
+            border-right: 3px solid #333;
+        }
+        .sudoku-board tr:first-child td {
+            border-top: 3px solid #333;
+        }
+        .sudoku-board td:first-child {
+            border-left: 3px solid #333;
+        }
+        .empty-cell {
+            color: #999;
+        }
+        .controls {
+            margin-top: 25px;
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4a4a8a;
+            color: white;
+            font-size: 16px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #373768;
+        }
+        .btn.active {
+            background-color: #2a2a50;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <h1 class="center">Sudoku Generado</h1>
-    <table>
+    <h1>Sudoku Master</h1>
+    <table class="sudoku-board">
         {% for row in puzzle %}
         <tr>
             {% for cell in row %}
-            <td class="{{ 'bold' if cell != 0 else '' }}">{{ cell or '' }}</td>
+            <td>
+                {% if cell != 0 %}
+                    {{ cell }}
+                {% else %}
+                    <span class="empty-cell">&nbsp;</span>
+                {% endif %}
+            </td>
             {% endfor %}
         </tr>
         {% endfor %}
     </table>
-    <p class="center"><a href="/">Generar otro Sudoku</a></p>
+    <div class="controls">
+        <span>Dificultad:</span>
+        {% for level in levels %}
+            <a href="/?difficulty={{ level }}" 
+               class="btn {{ 'active' if level == current_difficulty else '' }}">
+               {{ level.capitalize() }}
+            </a>
+        {% endfor %}
+    </div>
 </body>
 </html>
